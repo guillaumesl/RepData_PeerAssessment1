@@ -29,44 +29,48 @@ stepsPerDay <- aggregate(steps~date, stepAct, FUN=sum)
 ggplot(data=stepsPerDay, aes(x=steps)) + geom_histogram(colour="black", fill="grey", binwidth=1000)
 ```
 ## What is mean total number of steps taken per day?
+
 ```{r, echo=TRUE}
-paste("the mean per day is : ", mean(stepsPerDay$steps, na.rm=TRUE ))
-paste("the mean per day is : ", median(stepsPerDay$steps, na.rm=TRUE ))
+paste("The mean is : ", mean(stepsPerDay$steps, na.rm=TRUE ))
+paste("The median is : ", median(stepsPerDay$steps, na.rm=TRUE ))
 ```
+
 ## What is the average daily activity pattern?
 
 ```{r, echo=TRUE}
 meanStepsPerInterval <- aggregate(steps~interval, stepAct, FUN=mean)
 summary(meanStepsPerInterval)
 ggplot(meanStepsPerInterval, aes(x=interval, y=steps))+
-  geom_line(color="steelblue", size=1) 
+  geom_line(color="darkred", size=1) 
 ```
-
-The maximal interval is : **`r meanStepsPerInterval[which.max(meanStepsPerInterval$steps),]$interval`**
 ```{r, echo=TRUE}
-meanStepsPerInterval[which.max(meanStepsPerInterval$steps),]$interval
+paste("The interval with the max number of steps is : ",meanStepsPerInterval[which.max(meanStepsPerInterval$steps),]$interval )
 ```
-
 
 ## Imputing missing values
-
+For imputing the missing values, we will take the mean of the corresponding 5-minutes
+interval
 ```{r, echo=TRUE}
 
 stepActImputed <- stepAct
+   
 rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("orig", "mean"))
 rMna.idx = which(is.na(stepActImputed$steps))
+nbNa <- length(rMna.idx) 
+```
+The number of NA values is  : **`r nbNa`**
+
+
+```{r, echo=TRUE}
 stepActImputed[rMna.idx,"steps"] = rM[rMna.idx,"stepsmean"]
 summary(stepActImputed)
-#str(stepAct)
-#str(stepActImputed)
-#meanStepsPerIntervalImputed <- aggregate(steps~interval, stepActImputed, FUN=mean)
-#ggplot(meanStepsPerIntervalImputed, aes(x=interval, y=steps))+
-#  geom_line(color="steelblue", size=1) 
+
 meanStepsPerIntervalImputed <- aggregate(steps~date, stepActImputed, FUN=sum)
 ggplot(data=meanStepsPerIntervalImputed, aes(x=steps)) + geom_histogram(colour="black", fill="grey", binwidth=1000)
-paste("the mean per day is : ", mean(meanStepsPerIntervalImputed$steps))
-paste("the mean per day is : ", median(meanStepsPerIntervalImputed$steps))
+paste("The mean  is : ", mean(meanStepsPerIntervalImputed$steps, na.rm=T))
+paste("The median is : ", median(meanStepsPerIntervalImputed$steps))
 ```
+These new values **do** increase the mean and median, so not only they are different but they also increased their values.
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```{r, echo=TRUE}
@@ -74,8 +78,12 @@ stepActImputed$weekDays <- as.factor(ifelse(weekdays(stepActImputed$date) %in% c
 meanWeekDaysActImputed <- aggregate(steps~interval+ weekDays, data=stepActImputed, mean)
 ggplot(data=meanWeekDaysActImputed, 
                 aes(x=interval, y=steps)) + 
-             geom_line(color="steelblue", size=1) + 
+             geom_line(color="darkred", size=1) + 
              facet_wrap(~weekDays, nrow=2, ncol=1)
 
 ```
 
+As we can see with the plots, there are some differences between the two.
+During the week days, in the earlier moment of the days, we can see that the number of steps are higher, most likely due to people waking up to go to work.
+During the weekdays/daytime, we can assume that people are less active as they are working until they get off from work.
+During the week end, the average is more spread accross the day.

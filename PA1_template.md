@@ -45,21 +45,23 @@ ggplot(data=stepsPerDay, aes(x=steps)) + geom_histogram(colour="black", fill="gr
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 ## What is mean total number of steps taken per day?
 
-```r
-paste("the mean per day is : ", mean(stepsPerDay$steps, na.rm=TRUE ))
-```
-
-```
-## [1] "the mean per day is :  10766.1886792453"
-```
 
 ```r
-paste("the mean per day is : ", median(stepsPerDay$steps, na.rm=TRUE ))
+paste("The mean is : ", mean(stepsPerDay$steps, na.rm=TRUE ))
 ```
 
 ```
-## [1] "the mean per day is :  10765"
+## [1] "The mean is :  10766.1886792453"
 ```
+
+```r
+paste("The median is : ", median(stepsPerDay$steps, na.rm=TRUE ))
+```
+
+```
+## [1] "The median is :  10765"
+```
+
 ## What is the average daily activity pattern?
 
 
@@ -80,29 +82,35 @@ summary(meanStepsPerInterval)
 
 ```r
 ggplot(meanStepsPerInterval, aes(x=interval, y=steps))+
-  geom_line(color="steelblue", size=1) 
+  geom_line(color="darkred", size=1) 
 ```
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
-The maximal interval is : **835**
-
 ```r
-meanStepsPerInterval[which.max(meanStepsPerInterval$steps),]$interval
+paste("The interval with the max number of steps is : ",meanStepsPerInterval[which.max(meanStepsPerInterval$steps),]$interval )
 ```
 
 ```
-## [1] 835
+## [1] "The interval with the max number of steps is :  835"
 ```
-
 
 ## Imputing missing values
-
+For imputing the missing values, we will take the mean of the corresponding 5-minutes
+interval
 
 ```r
 stepActImputed <- stepAct
+   
 rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("orig", "mean"))
 rMna.idx = which(is.na(stepActImputed$steps))
+nbNa <- length(rMna.idx) 
+```
+The number of NA values is  : **2304**
+
+
+
+```r
 stepActImputed[rMna.idx,"steps"] = rM[rMna.idx,"stepsmean"]
 summary(stepActImputed)
 ```
@@ -118,32 +126,28 @@ summary(stepActImputed)
 ```
 
 ```r
-#str(stepAct)
-#str(stepActImputed)
-#meanStepsPerIntervalImputed <- aggregate(steps~interval, stepActImputed, FUN=mean)
-#ggplot(meanStepsPerIntervalImputed, aes(x=interval, y=steps))+
-#  geom_line(color="steelblue", size=1) 
 meanStepsPerIntervalImputed <- aggregate(steps~date, stepActImputed, FUN=sum)
 ggplot(data=meanStepsPerIntervalImputed, aes(x=steps)) + geom_histogram(colour="black", fill="grey", binwidth=1000)
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 ```r
-paste("the mean per day is : ", mean(meanStepsPerIntervalImputed$steps))
+paste("The mean  is : ", mean(meanStepsPerIntervalImputed$steps, na.rm=T))
 ```
 
 ```
-## [1] "the mean per day is :  10889.7992576554"
+## [1] "The mean  is :  10889.7992576554"
 ```
 
 ```r
-paste("the mean per day is : ", median(meanStepsPerIntervalImputed$steps))
+paste("The median is : ", median(meanStepsPerIntervalImputed$steps))
 ```
 
 ```
-## [1] "the mean per day is :  11015"
+## [1] "The median is :  11015"
 ```
+These new values **do** increase the mean and median, so not only they are different but they also increased their values.
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
@@ -152,9 +156,13 @@ stepActImputed$weekDays <- as.factor(ifelse(weekdays(stepActImputed$date) %in% c
 meanWeekDaysActImputed <- aggregate(steps~interval+ weekDays, data=stepActImputed, mean)
 ggplot(data=meanWeekDaysActImputed, 
                 aes(x=interval, y=steps)) + 
-             geom_line(color="steelblue", size=1) + 
+             geom_line(color="darkred", size=1) + 
              facet_wrap(~weekDays, nrow=2, ncol=1)
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
 
+As we can see with the plots, there are some differences between the two.
+During the week days, in the earlier moment of the days, we can see that the number of steps are higher, most likely due to people waking up to go to work.
+During the weekdays/daytime, we can assume that people are less active as they are working until they get off from work.
+During the week end, the average is more spread accross the day.
