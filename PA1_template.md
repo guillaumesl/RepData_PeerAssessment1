@@ -7,15 +7,15 @@ first let's create a nice thing
 
 ```r
 library(ggplot2)
-  setClass("simpleDate")
-  setAs("character","simpleDate", function(from) as.Date(from, format="%Y-%m-%d") )
+setClass("simpleDate")
+setAs("character","simpleDate", function(from) as.Date(from, format="%Y-%m-%d") )
 ```
 First, we are unzipping the file to the *zip* variable
 Once it's unzip, we can load the data to a new variable 
 
 ```r
-  zip<-unz("activity.zip",filename="activity.csv")
-  stepAct <- read.csv(zip,  sep=",", na.strings=c("", " ", "?"), header=TRUE, colClasses=c("numeric", "simpleDate", "numeric"))
+zip<-unz("activity.zip",filename="activity.csv")
+stepAct <- read.csv(zip,  sep=",", na.strings=c("", " ", "?"), header=TRUE, colClasses=c("numeric", "simpleDate", "numeric"))
 ```
 Let's check the summary of our dataset
 
@@ -101,7 +101,7 @@ interval
 
 ```r
 stepActImputed <- stepAct
-   
+
 rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("orig", "mean"))
 rMna.idx = which(is.na(stepActImputed$steps))
 nbNa <- length(rMna.idx) 
@@ -155,9 +155,9 @@ These new values **do** increase the mean and median, so not only they are diffe
 stepActImputed$weekDays <- as.factor(ifelse(weekdays(stepActImputed$date) %in% c("Saturday","Sunday"), "Weekend", "Weekday")) 
 meanWeekDaysActImputed <- aggregate(steps~interval+ weekDays, data=stepActImputed, mean)
 ggplot(data=meanWeekDaysActImputed, 
-                aes(x=interval, y=steps)) + 
-             geom_line(color="darkred", size=1) + 
-             facet_wrap(~weekDays, nrow=2, ncol=1)
+       aes(x=interval, y=steps)) + 
+  geom_line(color="darkred", size=1) + 
+  facet_wrap(~weekDays, nrow=2, ncol=1)
 ```
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
