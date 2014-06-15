@@ -2,7 +2,7 @@
 
 
 ## Loading and preprocessing the data
-first let's create a nice thing
+First let's create some new simpleDate class to parse the csv
 
 
 ```r
@@ -97,7 +97,8 @@ paste("The interval with the max number of steps is : ",meanStepsPerInterval[whi
 
 ## Imputing missing values
 For imputing the missing values, we will take the mean of the corresponding 5-minutes
-interval
+interval.  
+The merge function is used to merge the two datasets on interval.
 
 ```r
 stepActImputed <- stepAct
@@ -106,7 +107,7 @@ rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("ori
 rMna.idx = which(is.na(stepActImputed$steps))
 nbNa <- length(rMna.idx) 
 ```
-The number of NA values is  : **2304**
+paste("The number of NA values is  : ",nbNa)
 
 
 
@@ -133,7 +134,7 @@ ggplot(data=meanStepsPerIntervalImputed, aes(x=steps)) + geom_histogram(colour="
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 ```r
-paste("The mean  is : ", mean(meanStepsPerIntervalImputed$steps, na.rm=T))
+paste("The mean  is : ", mean(meanStepsPerIntervalImputed$steps))
 ```
 
 ```
@@ -162,7 +163,7 @@ ggplot(data=meanWeekDaysActImputed,
 
 ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
 
-As we can see with the plots, there are some differences between the two.
-During the week days, in the earlier moment of the days, we can see that the number of steps are higher, most likely due to people waking up to go to work.
-During the weekdays/daytime, we can assume that people are less active as they are working until they get off from work.
-During the week end, the average is more spread accross the day.
+As we can see with the plots, there are **some differences between the two graphs**.  
+During the week days, in the **earlier** moment of the days, we can see that the number of steps are higher, most likely due to people waking up to go to work.  
+During the weekdays/daytime, we can assume that people are **less active** as they are working until they get off from work.  
+During the week end, the average is more **spread** accross the day.
