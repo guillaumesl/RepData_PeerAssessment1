@@ -66,7 +66,7 @@ paste("The median is : ", median(stepsPerDay$steps, na.rm=TRUE ))
 
 
 ```r
-meanStepsPerInterval <- aggregate(steps~interval, stepAct, FUN=mean)
+meanStepsPerInterval <- aggregate(steps~interval, stepAct, FUN=mean, na.action=na.omit)
 summary(meanStepsPerInterval)
 ```
 
@@ -106,8 +106,13 @@ stepActImputed <- stepAct
 rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("orig", "mean"))
 rMna.idx = which(is.na(stepActImputed$steps))
 nbNa <- length(rMna.idx) 
-```
+
 paste("The number of NA values is  : ",nbNa)
+```
+
+```
+## [1] "The number of NA values is  :  2304"
+```
 
 
 

@@ -38,7 +38,7 @@ paste("The median is : ", median(stepsPerDay$steps, na.rm=TRUE ))
 ## What is the average daily activity pattern?
 
 ```{r, echo=TRUE}
-meanStepsPerInterval <- aggregate(steps~interval, stepAct, FUN=mean)
+meanStepsPerInterval <- aggregate(steps~interval, stepAct, FUN=mean, na.action=na.omit)
 summary(meanStepsPerInterval)
 ggplot(meanStepsPerInterval, aes(x=interval, y=steps))+
   geom_line(color="darkred", size=1) 
@@ -58,8 +58,9 @@ stepActImputed <- stepAct
 rM  = merge(stepActImputed, meanStepsPerInterval, by="interval", suffixes=c("orig", "mean"))
 rMna.idx = which(is.na(stepActImputed$steps))
 nbNa <- length(rMna.idx) 
-```
+
 paste("The number of NA values is  : ",nbNa)
+```
 
 
 ```{r, echo=TRUE}
